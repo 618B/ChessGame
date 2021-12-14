@@ -15,13 +15,10 @@ namespace ChessGame.MoveRules
 
         protected override bool IsMoveValid(Point startPosition, Point endPosition)
         {
-            Size diffrence = (Size)endPosition - (Size)startPosition;
-
             Point currentPosition = new Point(startPosition.X + direction.X, startPosition.Y + direction.Y);
-            while (currentPosition.X != endPosition.X && currentPosition.Y != endPosition.Y)
+            while (board.IsFieldExists(currentPosition.X, currentPosition.Y) && currentPosition != endPosition)
             {
-                if (!board.IsFieldExists(currentPosition.X, currentPosition.Y) ||
-                    board[currentPosition.X, currentPosition.Y] != null)
+                if (board[currentPosition.X, currentPosition.Y] != null)
                     return false;
                 currentPosition.X += direction.X;
                 currentPosition.Y += direction.Y;
