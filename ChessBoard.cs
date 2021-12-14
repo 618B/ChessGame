@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ChessGame
 {
-    class ChessBorder
+    class ChessBoard
     {
         ChessPiece[,] _figures;
         readonly int _size;
 
-        public ChessBorder(int size = 8)
+        public ChessBoard(int size = 8)
         {
             _figures = new ChessPiece[size, size];
             _size = size;

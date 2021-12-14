@@ -9,8 +9,8 @@ namespace ChessGame.MoveRules
 {
     class StepMoveRule : MoveRule
     {
-        public StepMoveRule(Point direction, ChessBorder border) :
-            base(direction, border)
+        public StepMoveRule(Point direction, ChessBoard board) :
+            base(direction, board)
         { }
 
         protected override bool IsMoveValid(Point startPosition, Point endPosition)

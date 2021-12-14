@@ -5,26 +5,26 @@ namespace ChessGame.MoveRules
 {
     abstract class MoveRule
     {
-        protected readonly ChessBorder border;
+        protected readonly ChessBoard board;
         protected readonly Point direction;
 
-        public MoveRule(Point direction, ChessBorder border)
+        public MoveRule(Point direction, ChessBoard board)
         {
             if (direction.X == 0 && direction.Y == 0)
                 throw new Exception("Move value cannot be zero!");
             
             this.direction = direction;
-            this.border = border;
+            this.board = board;
         }
 
         public bool CanExecute(Point startPosition, Point endPosition)
         {
-            if (!border.IsFieldExists(startPosition.X, startPosition.Y) ||
-                !border.IsFieldExists(endPosition.X, endPosition.Y))
+            if (!board.IsFieldExists(startPosition.X, startPosition.Y) ||
+                !board.IsFieldExists(endPosition.X, endPosition.Y))
                 return false;
 
-            ChessPiece startPiece = border[startPosition.X, startPosition.Y];
-            ChessPiece endPiece = border[endPosition.X, endPosition.Y];
+            ChessPiece startPiece = board[startPosition.X, startPosition.Y];
+            ChessPiece endPiece = board[endPosition.X, endPosition.Y];
             if ((startPiece == null) ||
                 ((endPiece != null) && (endPiece.Side == startPiece.Side)))
                 return false;
