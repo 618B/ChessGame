@@ -19,8 +19,8 @@ namespace ChessGame
 
         public bool IsFieldExists(int x, int y)
         {
-            return (x > 0 && x < _size) && 
-                    (y > 0 && y < _size);
+            return (x >= 0 && x < _size) && 
+                    (y >= 0 && y < _size);
         }
 
         public ChessPiece this[int x, int y]
