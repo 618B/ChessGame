@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace ChessGame.MoveRules
+namespace ChessGame
 {
     abstract class MoveRule
     {
