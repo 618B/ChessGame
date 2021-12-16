@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ChessGame.MoveRules
 {
-    class PawnAttackMoveRule : StepMoveRule
+    class PawnAttackMoveRule : PawnStepMoveRule
     {
-        public PawnAttackMoveRule(Point direction, ChessBoard board) : 
-            base(direction, board)
+        public PawnAttackMoveRule(IPromotionProvider provider, Point direction, ChessBoard board) : 
+            base(provider, direction, board)
         {
         }
 

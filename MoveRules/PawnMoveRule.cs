@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using ChessGame.Moves;
+
 namespace ChessGame.MoveRules
 {
-    class PawnMoveRule : StepMoveRule
+    class PawnMoveRule : PawnStepMoveRule
     {
 
-        public PawnMoveRule(Point direction, ChessBoard board):
-            base(direction, board)
+        public PawnMoveRule(IPromotionProvider provider, Point direction, ChessBoard board):
+            base(provider, direction, board)
         { }
 
         public override bool Attacking => false;
