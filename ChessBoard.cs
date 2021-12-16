@@ -58,6 +58,20 @@ namespace ChessGame
 
             return false;
         }
+
+        public Point? FindPiece(ChessPiece piece)
+        {
+            for (int i = 0; i < _size; i++)
+            {
+                for (int j = 0; j < _size; j++)
+                {
+                    if (_figures[i, j] == piece)
+                        return new Point(i, j);
+                }
+            }
+
+            return null;
+        }
         
     }
 }
