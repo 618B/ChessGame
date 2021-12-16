@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessGame.Moves;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -18,6 +19,11 @@ namespace ChessGame.MoveRules
         public EnPassantRule(IMoveHistory moveHistory, Point direction, ChessBoard board) : base(direction, board)
         {
             this.moveHistory = moveHistory;
+        }
+
+        public override Move CreateMove(Point startPosition, Point endPosition)
+        {
+            return new EnPassantMove(new Point(startPosition.X + direction.X, startPosition.Y), startPosition, endPosition, board);
         }
 
         protected override bool IsMoveValid(Point startPosition, Point endPosition)

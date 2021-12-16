@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessGame.Moves;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -12,6 +13,11 @@ namespace ChessGame.MoveRules
         public SlidingMoveRule(Point direction, ChessBoard board) :
             base(direction, board)
         { }
+
+        public override Move CreateMove(Point startPosition, Point endPosition)
+        {
+            return new DefaultMove(startPosition, endPosition, board);
+        }
 
         protected override bool IsMoveValid(Point startPosition, Point endPosition)
         {
