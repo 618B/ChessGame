@@ -11,7 +11,7 @@ namespace ChessGame.MoveRules
     /// Взятие на проходе
     /// </summary>
     /// <typeparam name="T">Ход, против которого будет применяться правило</typeparam>
-    class EnPassantRule<T> : StepMoveRule
+    class EnPassantRule<T> : StepMoveRule where T : Move
     {
         protected IMoveHistory moveHistory;
 
