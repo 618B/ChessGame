@@ -50,7 +50,7 @@ namespace ChessGame
                 {
                     if (_figures[i, j] != null && _figures[i, j].Side == attackSide)
                     {
-                        if (_figures[i, j].Rules.Any(moveRule => moveRule.CanExecute(new Point(i, j), attackField)))
+                        if (_figures[i, j].Rules.Any(moveRule => moveRule.Attacking && moveRule.CanExecute(new Point(i, j), attackField)))
                             return true;
                     }
                 }

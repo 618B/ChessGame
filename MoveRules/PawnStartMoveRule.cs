@@ -23,6 +23,7 @@ namespace ChessGame.MoveRules
             return new PawnStartMove(startPosition, endPosition, board);
         }
 
+        public override bool Attacking => false;
 
         protected override bool IsMoveValid(Point startPosition, Point endPosition)
         {

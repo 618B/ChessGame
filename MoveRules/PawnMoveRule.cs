@@ -14,6 +14,8 @@ namespace ChessGame.MoveRules
             base(direction, board)
         { }
 
+        public override bool Attacking => false;
+
         protected override bool IsMoveValid(Point startPosition, Point endPosition)
         {
             if (board[endPosition.X, endPosition.Y] != null)

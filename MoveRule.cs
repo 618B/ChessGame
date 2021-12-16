@@ -37,5 +37,7 @@ namespace ChessGame
         protected abstract bool IsMoveValid(Point startPosition, Point endPosition);
 
         public abstract Move CreateMove(Point startPosition, Point endPosition);
+
+        public virtual bool Attacking => true;
     }
 }
