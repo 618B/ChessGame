@@ -14,6 +14,17 @@ namespace ChessGame.MoveRules
             base(direction, board)
         { }
 
+        public override IEnumerable<Move> AvailableMoves(Point startPosition)
+        {
+            List<Move> moves = new List<Move>();
+
+            Point endPosition = new Point(startPosition.X + direction.X, startPosition.Y + direction.Y);
+            if (CanExecute(startPosition, endPosition))
+                moves.Add(CreateMove(startPosition, endPosition));
+
+            return moves;
+        }
+
         public override Move CreateMove(Point startPosition, Point endPosition)
         {
             return new DefaultMove(startPosition, endPosition, board);

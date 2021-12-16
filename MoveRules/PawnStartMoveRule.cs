@@ -20,6 +20,18 @@ namespace ChessGame.MoveRules
             this.movement = movement;
         }
 
+        public override IEnumerable<Move> AvailableMoves(Point startPosition)
+        {
+            List<Move> moves = new List<Move>();
+
+            Point endPosition = new Point(startPosition.X + movement.X, startPosition.Y + movement.Y);
+            if (CanExecute(startPosition, endPosition))
+                moves.Add(CreateMove(startPosition, endPosition));
+
+
+            return moves;
+        }
+
         public override Move CreateMove(Point startPosition, Point endPosition)
         {
             return new PawnStartMove(startPosition, endPosition, board);

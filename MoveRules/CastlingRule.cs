@@ -72,5 +72,15 @@ namespace ChessGame.MoveRules
 
             return true;
         }
+
+        public override IEnumerable<Move> AvailableMoves(Point startPosition)
+        {
+            List<Move> moves = new List<Move>();
+
+            if (CanExecute(startPosition, target))
+                moves.Add(CreateMove(startPosition, target));
+
+            return moves;
+        }
     }
 }

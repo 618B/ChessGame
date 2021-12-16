@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace ChessGame
@@ -39,5 +40,7 @@ namespace ChessGame
         public abstract Move CreateMove(Point startPosition, Point endPosition);
 
         public virtual bool Attacking => true;
+
+        public abstract IEnumerable<Move> AvailableMoves(Point startPosition);
     }
 }
