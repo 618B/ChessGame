@@ -12,8 +12,8 @@ namespace ChessGame.Moves
         protected Point targetPiecePoint;
         protected ChessPiece targetPiece;
 
-        public EnPassantMove(Point targetPiecePoint, Point startPoint, Point endPoint, ChessPiece piece, ChessBoard board) : 
-            base(startPoint, endPoint, piece, board)
+        public EnPassantMove(Point targetPiecePoint, Point startPoint, Point endPoint, ChessBoard board) : 
+            base(startPoint, endPoint, board)
         {
             this.targetPiecePoint = targetPiecePoint;
         }

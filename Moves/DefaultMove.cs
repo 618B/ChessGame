@@ -11,8 +11,8 @@ namespace ChessGame.Moves
     {
         protected ChessPiece targetPiece;
 
-        public DefaultMove(Point startPoint, Point endPoint, ChessPiece piece, ChessBoard board) : 
-            base(startPoint, endPoint, piece, board)
+        public DefaultMove(Point startPoint, Point endPoint, ChessBoard board) : 
+            base(startPoint, endPoint, board)
         {
         }
 

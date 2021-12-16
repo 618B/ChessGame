@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +12,14 @@ namespace ChessGame
         protected ChessBoard board;
         protected ChessPiece piece;
 
-        public Move(ChessPiece piece,ChessBoard board)
+        protected Point startPoint, endPoint;
+
+        public Move(Point startPoint, Point endPoint, ChessBoard board)
         {
             this.board = board;
-            this.piece = piece;
+            this.piece = board[startPoint.X, startPoint.Y];
+            this.startPoint = startPoint;
+            this.endPoint = endPoint;
         }
 
         public abstract void Execute();

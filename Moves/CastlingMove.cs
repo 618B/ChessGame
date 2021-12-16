@@ -11,8 +11,8 @@ namespace ChessGame.Moves
     {
         protected Point startTargetPoint, endTargetPoint;
 
-        public CastlingMove(Point startTargetPoint, Point endTargetPoint, Point startPoint, Point endPoint, ChessPiece piece, ChessBoard board) : 
-            base(startPoint, endPoint, piece, board)
+        public CastlingMove(Point startTargetPoint, Point endTargetPoint, Point startPoint, Point endPoint, ChessBoard board) : 
+            base(startPoint, endPoint, board)
         {
             this.startTargetPoint = startTargetPoint;
             this.endTargetPoint = endTargetPoint;
