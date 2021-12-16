@@ -20,13 +20,13 @@ namespace ChessGame.Moves
         {
             targetPiece = board[endPoint.X, endPoint.Y];
             board[endPoint.X, endPoint.Y] = piece;
-            board[startPoint.X, endPoint.Y] = null;
+            board[startPoint.X, startPoint.Y] = null;
         }
 
         public override void Undo()
         {
             board[endPoint.X, endPoint.Y] = targetPiece;
-            board[startPoint.X, endPoint.Y] = piece;
+            board[startPoint.X, startPoint.Y] = piece;
         }
     }
 }
