@@ -72,6 +72,8 @@ namespace ChessGame
 
             return null;
         }
+
+        public int Size => _size;
         
     }
 }
