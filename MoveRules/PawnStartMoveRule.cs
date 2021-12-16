@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessGame.Moves;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -16,7 +17,12 @@ namespace ChessGame.MoveRules
         {
             this.history = history;
         }
-        
+
+        public override Move CreateMove(Point startPosition, Point endPosition)
+        {
+            return new PawnStartMove(startPosition, endPosition, board);
+        }
+
 
         protected override bool IsMoveValid(Point startPosition, Point endPosition)
         {
