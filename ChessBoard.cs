@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace ChessGame
 {
@@ -39,6 +40,23 @@ namespace ChessGame
 
                 _figures[x, y] = value;
             }
+        }
+
+        public bool IsUnderAttack(Point attackField, Side attackSide)
+        {
+            for (int i = 0; i < _size; i++)
+            {
+                for (int j = 0; j < _size; j++)
+                {
+                    if (_figures[i, j] != null && _figures[i, j].Side == attackSide)
+                    {
+                        if (_figures[i, j].Rules.Any(moveRule => moveRule.CanExecute(new Point(i, j), attackField)))
+                            return true;
+                    }
+                }
+            }
+
+            return false;
         }
         
     }
