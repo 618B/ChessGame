@@ -16,14 +16,21 @@ namespace ChessGame.Moves
             base(startPoint, endPoint, board)
         {
             this.targetPiecePoint = targetPiecePoint;
+            targetPiece = board[targetPiecePoint.X, targetPiecePoint.Y];
         }
 
         public override void Execute()
         {
-            targetPiece = board[targetPiecePoint.X, targetPiecePoint.Y];
             board[endPoint.X, endPoint.Y] = piece;
             board[startPoint.X, startPoint.Y] = null;
             board[targetPiecePoint.X, targetPiecePoint.Y] = null;
+        }
+
+        public override void Serialize(IMoveFormatter formatter)
+        {
+            formatter.SetPoistions(startPoint, endPoint)
+                .SetAttackedPiece(targetPiece)
+                .SetMovablePiece(piece);
         }
 
         public override void Undo()

@@ -25,6 +25,14 @@ namespace ChessGame.Moves
             board[endPoint.X, endPoint.Y] = promotionPiece;
         }
 
+        public override void Serialize(IMoveFormatter formatter)
+        {
+            formatter.SetPoistions(startPoint, endPoint)
+                .SetAttackedPiece(targetPiece)
+                .SetPromotion(promotionPiece)
+                .SetMovablePiece(piece);
+        }
+
         public override void Undo()
         {
             board[startPoint.X, startPoint.Y] = startPiece;

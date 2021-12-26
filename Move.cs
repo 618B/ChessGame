@@ -26,6 +26,8 @@ namespace ChessGame
 
         public abstract void Undo();
 
+        public abstract void Serialize(IMoveFormatter formatter);
+
         public ChessPiece Piece => piece;
     }
 }

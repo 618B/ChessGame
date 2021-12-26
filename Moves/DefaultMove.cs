@@ -14,13 +14,20 @@ namespace ChessGame.Moves
         public DefaultMove(Point startPoint, Point endPoint, ChessBoard board) : 
             base(startPoint, endPoint, board)
         {
+            targetPiece = board[endPoint.X, endPoint.Y];
         }
 
         public override void Execute()
         {
-            targetPiece = board[endPoint.X, endPoint.Y];
             board[endPoint.X, endPoint.Y] = piece;
             board[startPoint.X, startPoint.Y] = null;
+        }
+
+        public override void Serialize(IMoveFormatter formatter)
+        {
+            formatter.SetPoistions(startPoint, endPoint)
+                .SetAttackedPiece(targetPiece)
+                .SetMovablePiece(piece);
         }
 
         public override void Undo()
