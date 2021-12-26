@@ -23,6 +23,8 @@ namespace ChessGame
 
         public Side Side => _side;
 
-        public List<MoveRules.MoveRule> Rules { get; set; } = new List<MoveRule>();
+        public List<MoveRule> Rules { get; set; } = new List<MoveRule>();
+
+        public string Name { get; set; }
     }
 }
