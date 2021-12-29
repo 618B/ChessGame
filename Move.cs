@@ -22,6 +22,10 @@ namespace ChessGame
             this.endPoint = endPoint;
         }
 
+        public Point StartPoint => startPoint;
+
+        public Point EndPoint => endPoint;
+
         public abstract void Execute();
 
         public abstract void Undo();
