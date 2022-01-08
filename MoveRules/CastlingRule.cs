@@ -1,25 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using ChessGame.Moves;
 
 namespace ChessGame.MoveRules
-{
+{ 
+    enum CastlingType
+    {
+        Long, Short
+    }
+
     class CastlingRule : MoveRule
     {
         protected ChessPiece changePiece;
         protected Point target, changePiecePosition, targetChangePiecePosition;
         protected IMoveHistory moveHistory;
+        protected CastlingType type;
 
-        public CastlingRule(ChessPiece changePiece, Point changePiecePosition, Point targetChangePiecePosition, Point target, IMoveHistory moveHistory, Point direction, ChessBoard board) : 
+        public CastlingRule(CastlingType type, Point changePiecePosition, Point targetChangePiecePosition, Point target, IMoveHistory moveHistory, Point direction, ChessBoard board) : 
             base(direction, board)
         {
+            changePiece = board[changePiecePosition.X, changePiecePosition.Y];
+            this.type = type;
             this.target = target;
-            this.changePiece = changePiece;
             this.moveHistory = moveHistory;
             this.changePiecePosition = changePiecePosition;
             this.targetChangePiecePosition = targetChangePiecePosition;
@@ -27,14 +29,16 @@ namespace ChessGame.MoveRules
 
         public override Move CreateMove(Point startPosition, Point endPosition)
         {
-            return new CastlingMove(changePiecePosition, targetChangePiecePosition, startPosition, endPosition, board);
+
+            return new CastlingMove((Moves.CastlingType)type, changePiecePosition, targetChangePiecePosition, startPosition, endPosition, board);
         }
 
         public override bool Attacking => false;
 
         protected override bool IsMoveValid(Point startPosition, Point endPosition)
         {
-            if (moveHistory.WasMoved(changePiece) ||
+            if (changePiece == null ||
+                moveHistory.WasMoved(changePiece) ||
                 moveHistory.WasMoved(board[startPosition.X, startPosition.Y]))
                 return false;
 

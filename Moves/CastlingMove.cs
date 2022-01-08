@@ -7,17 +7,22 @@ using System.Threading.Tasks;
 
 namespace ChessGame.Moves
 {
+    enum CastlingType
+    {
+        Long, Short
+    }
+
     class CastlingMove : Move
     {
+        protected CastlingType moveType;
         protected Point startTargetPoint, endTargetPoint;
-        bool longest = false;
 
-        public CastlingMove(bool longest, Point startTargetPoint, Point endTargetPoint, Point startPoint, Point endPoint, ChessBoard board) : 
+        public CastlingMove(CastlingType type, Point startTargetPoint, Point endTargetPoint, Point startPoint, Point endPoint, ChessBoard board) : 
             base(startPoint, endPoint, board)
         {
+            this.moveType = type;
             this.startTargetPoint = startTargetPoint;
             this.endTargetPoint = endTargetPoint;
-            this.longest = longest;
         }
 
         public override void Execute()
@@ -30,7 +35,7 @@ namespace ChessGame.Moves
 
         public override void Serialize(IMoveFormatter formatter)
         {
-            formatter.SetCastling(longest);
+            throw new NotImplementedException("Cant serialize castling move");
         }
 
         public override void Undo()
@@ -40,5 +45,7 @@ namespace ChessGame.Moves
             board[endPoint.X, endPoint.Y] = null;
             board[startPoint.X, startPoint.Y] = piece;
         }
+
+        public CastlingType CastlingType => moveType;
     }
 }
