@@ -19,6 +19,8 @@ namespace ChessGame.Moves
             this.promotionPiece = promotionPiece;
         }
 
+        public override bool Attacked => targetPiece != null;
+
         public override void Execute()
         {
             board[startPoint.X, startPoint.Y] = null;

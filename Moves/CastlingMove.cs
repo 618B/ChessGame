@@ -47,5 +47,7 @@ namespace ChessGame.Moves
         }
 
         public CastlingType CastlingType => moveType;
+
+        public override bool Attacked => false;
     }
 }

@@ -17,6 +17,8 @@ namespace ChessGame.Moves
             targetPiece = board[endPoint.X, endPoint.Y];
         }
 
+        public override bool Attacked => targetPiece != null;
+
         public override void Execute()
         {
             board[endPoint.X, endPoint.Y] = piece;

@@ -33,5 +33,7 @@ namespace ChessGame
         public abstract void Serialize(IMoveFormatter formatter);
 
         public ChessPiece Piece => piece;
+
+        public abstract bool Attacked { get; }
     }
 }
