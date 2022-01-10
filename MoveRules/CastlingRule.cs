@@ -86,5 +86,17 @@ namespace ChessGame.MoveRules
 
             return moves;
         }
+
+        public bool MinimalRequirements(Point startPosition)
+        {
+            if (changePiece == null ||
+                moveHistory.WasMoved(changePiece) ||
+                moveHistory.WasMoved(board[startPosition.X, startPosition.Y]))
+                return false;
+
+            return true;
+        }
+
+        public CastlingType CastlingType => type;
     }
 }
