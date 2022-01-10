@@ -7,7 +7,7 @@ using ChessGame.MoveRules;
 
 namespace ChessGame
 {
-    enum Side
+    public enum Side
     {
         White, Black
     }
