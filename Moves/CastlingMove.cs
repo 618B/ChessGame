@@ -35,13 +35,16 @@ namespace ChessGame.Moves
 
         public override void Serialize(IMoveFormatter formatter)
         {
-            throw new NotImplementedException("Cant serialize castling move");
+            if (moveType == CastlingType.Long)
+                formatter.SetLongCastling();
+            else
+                formatter.SetShortCastling();
         }
 
         public override void Undo()
         {
-            board[endTargetPoint.X, endTargetPoint.Y] = null;
             board[startTargetPoint.X, startTargetPoint.Y] = board[endTargetPoint.X, endTargetPoint.Y];
+            board[endTargetPoint.X, endTargetPoint.Y] = null;
             board[endPoint.X, endPoint.Y] = null;
             board[startPoint.X, startPoint.Y] = piece;
         }
