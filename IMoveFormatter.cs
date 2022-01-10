@@ -18,9 +18,11 @@ namespace ChessGame
 
         IMoveFormatter SetPromotion(ChessPiece piece);
 
-        IMoveFormatter SetEnemyKingAttacked(bool attacked);
+        IMoveFormatter SetEnemyKingAttacked();
 
-        IMoveFormatter SetCastling(bool longestCastling);
+        IMoveFormatter SetLongCastling();
+
+        IMoveFormatter SetShortCastling();
 
         string Result { get; }
     }
