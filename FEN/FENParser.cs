@@ -25,13 +25,16 @@ namespace ChessGame.FEN
         public int FiftyMoves { get; private set; }
         
         public int MovesCount { get; private set; }
+
+        Action<GameState> setGameState;
         
 
 
-        public FENParser(string fen, IMoveStorage moveHistory, IPromotionProvider promotionProvider)
+        public FENParser(string fen, IMoveStorage moveHistory, IPromotionProvider promotionProvider, Action<GameState> setGameState)
         {
             this.moveHistory = moveHistory;
             this.promotionProvider = promotionProvider;
+            this.setGameState = setGameState;
 
             string[] fenFragments = fen.Split(' ');
             ChessBoard = ParseBoard(fenFragments[0]);
@@ -154,7 +157,8 @@ namespace ChessGame.FEN
             };
 
             int xPos = convert[fenEnPassant[0]];
-            int yPos = Int32.Parse(fenEnPassant[1].ToString());
+            int yPos = 8 - Int32.Parse(fenEnPassant[1].ToString()); // Invert 
+           // yPos = 8 - yPos;
 
             // Поиск пешки, которая сделала ход на 2 клетки вперед
             Point startPoint = new Point(xPos, yPos - 1);
@@ -169,7 +173,8 @@ namespace ChessGame.FEN
                 endPoint = point;
             }
 
-            moveHistory.PushMove(new Moves.PawnStartMove(startPoint, endPoint, ChessBoard), pawn.Side);
+            GameState gameState = new GameState(pawn.Side, 0, setGameState);
+            moveHistory.PushMove(new Moves.PawnStartMove(startPoint, endPoint, ChessBoard), gameState);
         }
 
         private void ParseFiftyMoves(string fenFiftyMoves)

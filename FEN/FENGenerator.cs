@@ -116,7 +116,7 @@ namespace ChessGame.FEN
                     throw new Exception("Cant find pawn on the board");
 
                 Point pos = posiiton.Value;
-                enPassantPoint += x[pos.X] + (pos.Y + sideOffset).ToString();
+                enPassantPoint += x[pos.X] + (8  - (pos.Y + sideOffset)).ToString(); // invert
             }
 
             return this;
