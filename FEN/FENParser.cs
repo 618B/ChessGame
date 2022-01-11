@@ -30,10 +30,9 @@ namespace ChessGame.FEN
         
 
 
-        public FENParser(string fen, IMoveStorage moveHistory, IPromotionProvider promotionProvider, Action<GameState> setGameState)
+        public FENParser(string fen, IMoveStorage moveHistory, Action<GameState> setGameState)
         {
             this.moveHistory = moveHistory;
-            this.promotionProvider = promotionProvider;
             this.setGameState = setGameState;
 
             string[] fenFragments = fen.Split(' ');
@@ -57,6 +56,7 @@ namespace ChessGame.FEN
                 throw new Exception("Invalid board FEN");
 
             ChessBoard chessBoard = new();
+            promotionProvider = new PromotionManager(chessBoard);
 
             string digits = "012345678";
             for (int i = 0; i < boardData.Length; i++)
