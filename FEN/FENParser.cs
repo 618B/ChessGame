@@ -173,7 +173,7 @@ namespace ChessGame.FEN
                 endPoint = point;
             }
 
-            GameState gameState = new GameState(pawn.Side, 0, setGameState);
+            GameState gameState = new GameState(pawn.Side, 0, GameResult.OnGoing, CheckState.None, setGameState);
             moveHistory.PushMove(new Moves.PawnStartMove(startPoint, endPoint, ChessBoard), gameState);
         }
 

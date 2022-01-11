@@ -12,17 +12,23 @@ namespace ChessGame
 
         public int FiftyMovesCount { get; private set; }
 
-        Action<Side, int> apply;
+        public GameResult GameResult { get; private set; }
 
-        public GameState(Side turn, int fiftyMovesCount, Action<Side, int> apply)
+        public CheckState CheckState { get; private set; }
+
+        Action<GameState> apply;
+
+        public GameState(Side turn, int fiftyMovesCount, GameResult gameResult, CheckState checkState, Action<GameState> apply)
         {
+            GameResult = gameResult;
+            CheckState = checkState;
             Turn = turn;
             FiftyMovesCount = fiftyMovesCount;
         }
 
         public void Apply()
         {
-            apply(Turn, FiftyMovesCount);
+            apply(this);
         }
     }
 }
