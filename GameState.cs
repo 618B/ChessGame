@@ -24,6 +24,7 @@ namespace ChessGame
             CheckState = checkState;
             Turn = turn;
             FiftyMovesCount = fiftyMovesCount;
+            this.apply = apply;
         }
 
         public void Apply()
