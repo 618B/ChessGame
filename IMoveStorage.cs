@@ -9,6 +9,6 @@ namespace ChessGame
     interface IMoveStorage : IMoveHistory
     {
 
-        public void PushMove(Move mv, GameState turn);
+        public void AddMove(Move mv, GameState before, GameState after);
     }
 }

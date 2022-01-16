@@ -174,7 +174,7 @@ namespace ChessGame.FEN
             }
 
             GameState gameState = new GameState(pawn.Side, 0, GameResult.OnGoing, CheckState.None, setGameState);
-            moveHistory.PushMove(new Moves.PawnStartMove(startPoint, endPoint, ChessBoard), gameState);
+            moveHistory.AddMove(new Moves.PawnStartMove(startPoint, endPoint, ChessBoard), gameState, gameState);
         }
 
         private void ParseFiftyMoves(string fenFiftyMoves)
