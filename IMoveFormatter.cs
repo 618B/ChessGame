@@ -20,6 +20,8 @@ namespace ChessGame
 
         IMoveFormatter SetEnemyKingAttacked();
 
+        IMoveFormatter SetMate();
+
         IMoveFormatter SetLongCastling();
 
         IMoveFormatter SetShortCastling();
