@@ -52,6 +52,8 @@ namespace ChessGame
 
         public Side Turn { get; private set; } = Side.White;
 
+        public string FUCK { get; private set; }
+
         public ChessGame()
         {
             promotionManager = new PromotionManager(board);
@@ -121,13 +123,23 @@ namespace ChessGame
                 .Result;
         }
 
+        int counter = 0;
+        int ctr = 0;
+
+        public bool IsMoveAllowed(Point start, Point end)
+        {
+            return moves.ContainsKey(start) && moves[start].Contains(end);
+        }
+
         public void Move(Point start, Point end)
         {
-            if (GameResult != GameResult.OnGoing)
-                return;
+            counter++;
+          //  if (moves)
+          //      return;
 
             if (moves.ContainsKey(start) && moves[start].Contains(end))
             {
+                ctr++;
                 ChessPiece piece = board[start.X, start.Y];
 
                 var rule = piece.Rules.Find((mv) => { return mv.CanExecute(start, end); });
@@ -160,8 +172,11 @@ namespace ChessGame
                     GameState after = new GameState(Turn, fiftyMovesRule.MovesCount, GameResult, CheckState, SetState);
                     history.AddMove(mv, before, after);
 
+                    CalcMoves();
                 }
             }
+
+            FUCK = counter.ToString() + "   " + ctr.ToString();
         }
 
         public string CurrentMovePointer
@@ -245,7 +260,7 @@ namespace ChessGame
                             foreach (var move in moveRule.AvailableMoves(new Point(i, j)))
                             {
                                 move.Execute();
-                                if (!kingAttacked.IsApplied)
+                                if (kingAttacked == null || !kingAttacked.IsApplied)
                                 {
                                     moves[current].Add(move.EndPoint);
                                     currentSideHasMoves = true;
@@ -287,12 +302,16 @@ namespace ChessGame
             newGame.whiteKing = parser.WhiteKing;
             newGame.blackKing = parser.BlackKing;
 
-            newGame.whiteKingAttacked = new PieceAttacked(newGame.whiteKing, newGame.board);
-            newGame.blackKingAttacked = new PieceAttacked(newGame.blackKing, newGame.board);
+            if (newGame.whiteKing != null)
+                newGame.whiteKingAttacked = new PieceAttacked(newGame.whiteKing, newGame.board);
+            if (newGame.blackKing != null)
+                newGame.blackKingAttacked = new PieceAttacked(newGame.blackKing, newGame.board);
 
             newGame.fiftyMovesRule = new FiftyMoves(parser.FiftyMoves);
 
             newGame.Turn = parser.Turn == Side.White ? Side.Black : Side.White;
+
+            newGame.promotionManager = parser.PromotionProvider;
 
             // TODO Кол-во ходов
 
@@ -319,5 +338,26 @@ namespace ChessGame
             return pGNGenerator.Result;
         }
 
+
+        public static ChessGame FromPGN(string pgn)
+        {
+            var parser = new PGN.PGNParser(pgn);
+
+            ChessGame game = new ChessGame();
+            if (parser.FEN != string.Empty)
+                game = FromFEN(parser.FEN);
+
+
+            try
+            {
+                parser.ParseMoves(game, game.board);
+
+            }
+            catch (Exception ex) 
+            { 
+              // game.FUCK = ex.ToString(); 
+            }
+            return game;
+        }
     }
 }

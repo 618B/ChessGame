@@ -52,6 +52,8 @@ namespace ChessGame.FEN
 
         public FENGenerator AddCastlingState(ChessPiece king, ChessBoard board)
         {
+            if (king == null)
+                return this;
 
             Point? position = board.FindPiece(king);
             if (position == null)

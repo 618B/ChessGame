@@ -61,6 +61,9 @@ namespace ChessGame
 
         public Point? FindPiece(ChessPiece piece)
         {
+            if (piece == null)
+                return null;
+
             for (int i = 0; i < _size; i++)
             {
                 for (int j = 0; j < _size; j++)
@@ -75,5 +78,26 @@ namespace ChessGame
 
         public int Size => _size;
         
+        public Point? FindPieceByName(string pieceName)
+        {
+            for (int i = 0; i < _size; i++)
+            {
+                for (int j = 0; j < _size; j++)
+                {
+                    if (_figures[i, j] != null && _figures[i, j].Name == pieceName)
+                        return new Point(i, j);
+                }
+            }
+
+            return null;
+        }
+
+        public string FEN
+        {
+            get
+            {
+                return new FEN.FENGenerator().AddBorderState(this).Result;
+            }
+        }
     }
 }

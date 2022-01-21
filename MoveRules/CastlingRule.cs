@@ -39,7 +39,11 @@ namespace ChessGame.MoveRules
         {
             if (changePiece == null ||
                 moveHistory.WasMoved(changePiece) ||
-                moveHistory.WasMoved(board[startPosition.X, startPosition.Y]))
+                moveHistory.WasMoved(board[startPosition.X, startPosition.Y]) ||
+                board[changePiecePosition.X, changePiecePosition.Y] == null)
+                return false;
+
+            if (endPosition != target)
                 return false;
 
             Point currentPosition = new Point(startPosition.X + direction.X, startPosition.Y + direction.Y);
@@ -52,7 +56,6 @@ namespace ChessGame.MoveRules
             }
             if (currentPosition != changePiecePosition)
                 return false;
-
 
             // Проверка короля на шах
             // Проверка пути на шах

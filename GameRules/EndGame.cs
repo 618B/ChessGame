@@ -19,12 +19,7 @@ namespace ChessGame.GameRules
             blackKingAttacked = new PieceAttacked(blackKing, board);
         }
 
-        public bool Turn(Side side)
-        {
-            return SideHasMoves(side);
-        }
-
-        private bool SideHasMoves(Side side)
+        public bool SideHasMoves(Side side)
         {
             var kingAttacked = side == Side.White ? whiteKingAttacked : blackKingAttacked;
             for (int i = 0; i < board.Size; i++)

@@ -63,6 +63,9 @@ namespace ChessGame.MoveManagment
             if (_currentBranch == _mainBranch && _currentBranch.CurrentIndex == 0)
                 return;
 
+            _currentBranch.Undo();
+
+
             if (_currentBranch.CurrentIndex == 0)
             {
                 //_pointer = _pointer.SkipLast(1).ToList();
@@ -70,8 +73,6 @@ namespace ChessGame.MoveManagment
                 SetBranch(_pointer.SkipLast(1));
                 _currentBranch.ToMove(branchPos);
             }
-
-            _currentBranch.Undo();
         }
 
         public void Redo()
@@ -119,7 +120,7 @@ namespace ChessGame.MoveManagment
             if (_currentBranch.CurrentIndex == 0)
                 return false;
 
-            return _currentBranch.CurrentItem.GetType() == typeof(T);
+            return _currentBranch.CurrentItem.Move.GetType() == typeof(T);
         }
 
         public bool WasMoved(ChessPiece piece)
