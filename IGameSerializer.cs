@@ -19,7 +19,8 @@ namespace ChessGame
         public void AddComment(string data);
 
         public void AddPointer(string pointer);
-        
+
+        public void AddStartMessage(string message);
 
         public IMoveFormatter CreateMoveFormatter();
     }

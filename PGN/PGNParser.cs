@@ -46,18 +46,11 @@ namespace ChessGame.PGN
         {
             ParseMoves(game, board, moves);
         }
-
-        static int MoveCounter = 0;
-        static int deep = 0;
-
+        
         private void ParseMoves(ChessGame game, ChessBoard board, string moves)
         {
             moves = Regex.Replace(moves, "\\$[0-9]{1,}", "");
             string startFen = new FEN.FENGenerator().AddBorderState(board).Result;
-            if (startFen.Trim() == "r2q1rk1/ppp2ppp/2np1n2/4p3/2B1P1b1/2NPPN2/PPP3PP/R2Q1RK1 - - -")
-            {
-                int salam = 0;
-            }
 
             List<string> mv = new List<string>();
             List<(int, string)> branches = new List<(int, string)>();
@@ -135,17 +128,24 @@ namespace ChessGame.PGN
             if (move.Length != 0 && !move.Contains('\n'))
                 mv.Add(move);
 
+            // Add Comment before First Move
+            if (comments.Count != 0 && comments[0].Item1 == 0)
+                game.AddComment(comments[0].Item2);
+            
             int mvApplied = 0;
             for(int i = 0; i < mv.Count; i++)
             {
                 var m = CreateMove(board, mv[i].Replace("+", "").Replace("#", "").Replace("!", "").Replace("?", ""), game.Turn, game);
                 game.Move(m.StartPoint, m.EndPoint);
+
+                foreach (var (_, moveComment) in comments.Where(item => item.Item1 == i + 1))
+                {
+                    game.AddComment(moveComment);
+                }
+
                 mvApplied++;
-                MoveCounter++;
             }
-
-            string after = new FEN.FENGenerator().AddBorderState(board).Result;
-
+            
             for (int i = 0; i < branches.Count; i++)
             {
                 int targetMove = branches[i].Item1 - 1 < 0 ? 0 : branches[i].Item1 - 1;
@@ -165,11 +165,6 @@ namespace ChessGame.PGN
                         mvApplied++;
                     }
                 }
-                if (mvApplied == 0)
-                {
-                    int k = 15;
-                }
-                deep++;
                 ParseMoves(game, board, branches[i].Item2);
             }
             while (mvApplied != 0)
@@ -177,20 +172,12 @@ namespace ChessGame.PGN
                 game.Undo();
                 mvApplied--;
             }
-
-            string endFen = new FEN.FENGenerator().AddBorderState(board).Result;
-            if (endFen != startFen)
-            {
-                int salam = 0;
-            }
-            deep--;
         }
 
         private Move CreateMove(ChessBoard board, string pgnMove, Side side, ChessGame game)
         {
             List<char> registry = new List<char>() { 'K', 'Q', 'B', 'N', 'R' };
 
-            // TODO Castling
             if (pgnMove == "O-O")
             {
                 if (side == Side.White)

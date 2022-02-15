@@ -20,6 +20,8 @@ namespace ChessGame.Json
 
         private bool _inserted;
 
+        private string _startMesasge;
+
         public MovesJsonGenerator()
         {
             _currentBranch = _mainBranch;
@@ -96,6 +98,11 @@ namespace ChessGame.Json
             _currentMove.Pointer = pointer;
         }
 
+        public void AddStartMessage(string message)
+        {
+            _startMesasge = message;
+        }
+
         public IMoveFormatter CreateMoveFormatter()
         {
             return new PGNMoveFormatter();
@@ -111,7 +118,7 @@ namespace ChessGame.Json
                     _inserted = true;
                 }
                 
-                return JsonSerializer.Serialize(_mainBranch, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+                return JsonSerializer.Serialize( new { message = _startMesasge, moves = _mainBranch }, new JsonSerializerOptions(JsonSerializerDefaults.Web));
             }
         }
     }

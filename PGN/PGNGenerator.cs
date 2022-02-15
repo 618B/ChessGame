@@ -62,6 +62,11 @@ namespace ChessGame.PGN
             //
         }
 
+        public void AddStartMessage(string message)
+        {
+            //
+        }
+
         public void StartBranch()
         {
             branchStarted = true;

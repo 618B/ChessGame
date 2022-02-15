@@ -20,6 +20,11 @@ namespace ChessGame.MoveManagement
             _current = _head;
         }
 
+        public void CommentCurrentMove(string comment)
+        {
+            _current.MoveComment = comment;
+        }
+        
         public string Position
         {
             get =>  _current == _head ? null : _current.UniqueId;
@@ -32,6 +37,8 @@ namespace ChessGame.MoveManagement
 
         public void Serialize(IGameSerializer serializer)
         {
+            serializer.AddStartMessage(_head.MoveComment);
+            
             _head.Next?.Serialize(serializer, false);
 
             foreach (var childItem in _head.Children)
@@ -101,10 +108,7 @@ namespace ChessGame.MoveManagement
 
         private void SetPosition(string position)
         {
-            Console.WriteLine(position);
             _dataBase.TryGetValue(position, out var target);
-            Console.WriteLine(target);
-            Console.WriteLine(string.Join(' ', _dataBase.Keys));
             if (target == null)
                 return;
 

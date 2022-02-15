@@ -271,6 +271,11 @@ namespace ChessGame
             }
         }
 
+        public void AddComment(string comment)
+        {
+            _history.CommentCurrentMove(comment);
+        }
+
         public static ChessGame FromFEN(string fen)
         {
             ChessGame newGame = new ChessGame();

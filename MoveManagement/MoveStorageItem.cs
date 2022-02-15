@@ -13,6 +13,7 @@ namespace ChessGame.MoveManagement
             Move = move;
         }
 
+        public string MoveComment { get; set; }
         public string UniqueId { get; } = Guid.NewGuid().ToString();
         
         public GameState Before { get; }
@@ -71,6 +72,7 @@ namespace ChessGame.MoveManagement
                 serializer.AddBlackMove(moveFormatter);
             
             serializer.AddPointer(UniqueId);
+            serializer.AddComment(MoveComment);
 
             foreach (var childItem in Children)
             {
