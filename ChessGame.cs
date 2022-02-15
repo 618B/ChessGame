@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Drawing;
+using System.Text.Json;
 using ChessGame.DefaultPieces;
 using ChessGame.GameRules;
+using ChessGame.Json;
 using ChessGame.MoveManagement;
 
 namespace ChessGame
@@ -312,6 +314,15 @@ namespace ChessGame
             _history.Serialize(pGNGenerator);
 
             return pGNGenerator.Result;
+        }
+
+        public string CreateMoveJson()
+        {
+            MovesJsonGenerator generator = new MovesJsonGenerator();
+
+            _history.Serialize(generator);
+
+            return generator.Result;
         }
 
         public static ChessGame FromPGN(string pgn)
