@@ -16,7 +16,10 @@ namespace ChessGame
 
         public void EndBranch();
 
-        public void AddAdditional(string data);
+        public void AddComment(string data);
+
+        public void AddPointer(string pointer);
+        
 
         public IMoveFormatter CreateMoveFormatter();
     }

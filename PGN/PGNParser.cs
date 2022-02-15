@@ -1,4 +1,4 @@
-﻿using ChessGame.MoveManagment;
+﻿using ChessGame.MoveManagement;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
