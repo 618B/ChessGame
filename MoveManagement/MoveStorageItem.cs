@@ -14,6 +14,8 @@ namespace ChessGame.MoveManagement
         }
 
         public string MoveComment { get; set; }
+
+        public List<Mark> Marks { get; } = new();
         public string UniqueId { get; } = Guid.NewGuid().ToString();
         
         public GameState Before { get; }
@@ -71,6 +73,7 @@ namespace ChessGame.MoveManagement
             else
                 serializer.AddBlackMove(moveFormatter);
             
+            Console.WriteLine(MoveComment);
             serializer.AddPointer(UniqueId);
             serializer.AddComment(MoveComment);
 

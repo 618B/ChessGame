@@ -25,6 +25,9 @@ namespace ChessGame
 
     public class ChessGame
     {
+        private readonly Dictionary<int, Mark> _marks = new();
+        private int _marksNextKey = 0;
+
         readonly MoveManagement.MoveManager _history = new();
 
         ChessBoard _board = new();
@@ -52,6 +55,7 @@ namespace ChessGame
 
         public Side Turn { get; private set; } = Side.White;
 
+        public List<Mark> Marks => _marks.Values.ToList();
 
         public ChessGame()
         {
@@ -129,8 +133,7 @@ namespace ChessGame
 
         public void Move(Point start, Point end)
         {
-            //  if (moves)
-          //      return;
+            ClearMarks();
           
             if (!_moves.ContainsKey(start) || !_moves[start].Contains(end)) 
                 return;
@@ -171,28 +174,38 @@ namespace ChessGame
 
         public void ToStart()
         {
+            ClearMarks();
             _history.PointerToStart();
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
         }
 
         public void ToEnd()
         {
+            ClearMarks();
             _history.PointerToEnd();
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
         }
 
         public void Undo()
         {
+            ClearMarks();
             _history.Undo();
-
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
 
         }
 
         public void Redo()
         {
+            ClearMarks();
             _history.Redo();
-
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
         }
 
@@ -201,7 +214,10 @@ namespace ChessGame
             get => _history.Position;
             set
             {
+                ClearMarks();
                 _history.Position = value;
+                foreach (var historyMark in _history.Marks)
+                    AddMark(historyMark);
                 CalcMoves();
             }
         }
@@ -274,6 +290,30 @@ namespace ChessGame
         public void AddComment(string comment)
         {
             _history.CommentCurrentMove(comment);
+        }
+
+        public void AddMark(Mark mark)
+        {
+            mark.UniqueKey = _marksNextKey;
+            _marks.Add(_marksNextKey++, mark);
+        }
+
+        public void RemoveMark(int markKey)
+        {
+            if (!_marks.ContainsKey(markKey))
+                return;
+            _marks.Remove(markKey);
+        }
+
+        public void ClearMarks()
+        {
+            _marks.Clear();
+            _marksNextKey = 0;
+        }
+
+        public void AddMoveMark(Mark mark)
+        {
+            _history.AddMark(mark);
         }
 
         public static ChessGame FromFEN(string fen)

@@ -24,7 +24,14 @@ namespace ChessGame.MoveManagement
         {
             _current.MoveComment = comment;
         }
-        
+
+        public void AddMark(Mark mark)
+        {
+            _current.Marks.Add(mark);
+        }
+
+        public List<Mark> Marks => _current.Marks;
+
         public string Position
         {
             get =>  _current == _head ? null : _current.UniqueId;
@@ -121,10 +128,15 @@ namespace ChessGame.MoveManagement
             
             PointerToStart();
             while (path.Count != 1)
-                path.Pop().Move.Execute();
+            {
+                var mv = path.Pop();
+                mv.Move.Execute();
+                _movedPieces.Add(mv.Move.Piece);
+            }
 
             _current = path.Pop();
             _current.Move.Execute();
+            _movedPieces.Add(_current.Move.Piece);
             
             _current.After.Apply();
         }

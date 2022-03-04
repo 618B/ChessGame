@@ -21,7 +21,7 @@ namespace ChessGame
         public void AddPointer(string pointer);
 
         public void AddStartMessage(string message);
-
+        
         public IMoveFormatter CreateMoveFormatter();
     }
 }

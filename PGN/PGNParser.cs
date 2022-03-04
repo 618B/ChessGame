@@ -21,7 +21,7 @@ namespace ChessGame.PGN
         {
             string[] pgnParts = input.Split("\n\n");
             ParseData(pgnParts[0]);
-            moves = pgnParts[1].Replace("1-0", "").Replace("0-1", "").Replace("1/2-1/2", "");
+            moves = pgnParts[1].Replace("1-0", "").Replace("0-1", "").Replace("1/2-1/2", "").Replace("*", "");
         }
 
         public ChessGame ChessGame => game;
@@ -130,8 +130,15 @@ namespace ChessGame.PGN
 
             // Add Comment before First Move
             if (comments.Count != 0 && comments[0].Item1 == 0)
+            {
+                var marks = GetMarks(comments[0].Item2);
+                foreach (var mark in marks)
+                {
+                    game.AddMoveMark(mark);
+                }
                 game.AddComment(comments[0].Item2);
-            
+            }
+
             int mvApplied = 0;
             for(int i = 0; i < mv.Count; i++)
             {
@@ -141,6 +148,11 @@ namespace ChessGame.PGN
                 foreach (var (_, moveComment) in comments.Where(item => item.Item1 == i + 1))
                 {
                     game.AddComment(moveComment);
+                    var marks = GetMarks(moveComment);
+                    foreach (var mark in marks)
+                    {
+                        game.AddMoveMark(mark);
+                    }
                 }
 
                 mvApplied++;
@@ -393,6 +405,45 @@ namespace ChessGame.PGN
             }
 
             throw new Exception("PGN Parsing error! Source Target");
+        }
+
+        private List<Mark> GetMarks(string comment)
+        {
+            var result = new List<Mark>();
+            
+            var marks = Regex.Matches(comment, @"([^\)]+)\[(.*)\]").ToList();
+            foreach (var item in marks)
+            {
+                string[] content = item.Value.Replace("[%csl ", "").Replace("[%cal ", "").Replace("G", "")
+                    .Replace("]", ",").TrimEnd(',').Split(',');
+                foreach (var contentItem in content)
+                {
+                    string target = contentItem.Trim();
+                    if (target.Length == 4)
+                    {
+                        // Arrow
+                        int startX = ConvertX(target[0]);
+                        int endX = ConvertX(target[2]);
+                        result.Add(new Mark()
+                        {
+                            StartPoint = new Point(startX, 8 - Convert.ToInt32(target[1].ToString())),
+                            EndPoint = new Point(endX, 8 - Convert.ToInt32(target[3].ToString()))
+                        });
+                    }
+                    else if (target.Length == 2)
+                    {
+                        int startX = ConvertX(target[0]);
+                        result.Add(new Mark()
+                        {
+                            StartPoint = new Point(startX, 8 -Convert.ToInt32(target[1].ToString())),
+                            EndPoint = new Point(startX, 8 - Convert.ToInt32(target[1].ToString())),
+                        });
+                    }
+                }
+                
+            }
+
+            return result;
         }
     }
 
