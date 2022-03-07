@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Drawing;
+using System.Text.Json;
 using ChessGame.DefaultPieces;
 using ChessGame.GameRules;
-using ChessGame.MoveManagment;
+using ChessGame.Json;
+using ChessGame.MoveManagement;
 
 namespace ChessGame
 {
@@ -18,33 +20,34 @@ namespace ChessGame
 
     public enum CheckState
     {
-        White, Black, None
+        None, White, Black
     }
 
     public class ChessGame
     {
+        private readonly Dictionary<int, Mark> _marks = new();
+        private int _marksNextKey = 0;
+
+        readonly MoveManagement.MoveManager _history = new();
+
+        ChessBoard _board = new();
+
+        Dictionary<Point, List<Point>> _moves = new();
 
 
-        MoveStorage history = new();
+        FiftyMoves _fiftyMovesRule = new();
 
-        ChessBoard board = new();
+        FEN.FENGenerator _fen = new();
 
-        Dictionary<Point, List<Point>> moves = new();
+        King _whiteKing;
+        King _blackKing;
 
+        PieceAttacked _whiteKingAttacked;
+        PieceAttacked _blackKingAttacked;
 
-        FiftyMoves fiftyMovesRule = new();
+        PromotionManager _promotionManager;
 
-        FEN.FENGenerator fen = new();
-
-        King whiteKing;
-        King blackKing;
-
-        PieceAttacked whiteKingAttacked;
-        PieceAttacked blackKingAttacked;
-
-        PromotionManager promotionManager;
-
-        bool currentSideHasMoves;
+        bool _currentSideHasMoves;
 
         public GameResult GameResult { get; private set; } = GameResult.OnGoing;
 
@@ -52,57 +55,59 @@ namespace ChessGame
 
         public Side Turn { get; private set; } = Side.White;
 
+        public List<Mark> Marks => _marks.Values.ToList();
+
         public ChessGame()
         {
-            promotionManager = new PromotionManager(board);
+            _promotionManager = new PromotionManager(_board);
 
 
-            board[1, 0] = new Knight(Side.Black, board);
-            board[6, 0] = new Knight(Side.Black, board);
-            board[1, 7] = new Knight(Side.White, board);
-            board[6, 7] = new Knight(Side.White, board);
+            _board[1, 0] = new Knight(Side.Black, _board);
+            _board[6, 0] = new Knight(Side.Black, _board);
+            _board[1, 7] = new Knight(Side.White, _board);
+            _board[6, 7] = new Knight(Side.White, _board);
 
-            board[2, 0] = new Bishop(Side.Black, board);
-            board[5, 0] = new Bishop(Side.Black, board);
-            board[2, 7] = new Bishop(Side.White, board);
-            board[5, 7] = new Bishop(Side.White, board);
-
-
-            board[0, 0] = new Rook(Side.Black, board);
-            board[7, 0] = new Rook(Side.Black, board);
-            board[0, 7] = new Rook(Side.White, board);
-            board[7, 7] = new Rook(Side.White, board);
-
-            board[3, 7] = new Queen(Side.White, board);
-            board[3, 0] = new Queen(Side.Black, board);
-
-            board[0, 1] = new Pawn(Side.Black, promotionManager, history, board);
-            board[1, 1] = new Pawn(Side.Black, promotionManager, history, board);
-            board[2, 1] = new Pawn(Side.Black, promotionManager, history, board);
-            board[3, 1] = new Pawn(Side.Black, promotionManager, history, board);
-            board[4, 1] = new Pawn(Side.Black, promotionManager, history, board);
-            board[5, 1] = new Pawn(Side.Black, promotionManager, history, board);
-            board[6, 1] = new Pawn(Side.Black, promotionManager, history, board);
-            board[7, 1] = new Pawn(Side.Black, promotionManager, history, board);
-
-            board[0, 6] = new Pawn(Side.White, promotionManager, history, board);
-            board[1, 6] = new Pawn(Side.White, promotionManager, history, board);
-            board[2, 6] = new Pawn(Side.White, promotionManager, history, board);
-            board[3, 6] = new Pawn(Side.White, promotionManager, history, board);
-            board[4, 6] = new Pawn(Side.White, promotionManager, history, board);
-            board[5, 6] = new Pawn(Side.White, promotionManager, history, board);
-            board[6, 6] = new Pawn(Side.White, promotionManager, history, board);
-            board[7, 6] = new Pawn(Side.White, promotionManager, history, board);
-
-            whiteKing = new King(Side.White, new Point(0, 7), new Point(7, 7), history, board);
-            blackKing = new King(Side.Black, new Point(0, 0), new Point(7, 0), history, board);
+            _board[2, 0] = new Bishop(Side.Black, _board);
+            _board[5, 0] = new Bishop(Side.Black, _board);
+            _board[2, 7] = new Bishop(Side.White, _board);
+            _board[5, 7] = new Bishop(Side.White, _board);
 
 
-            board[4, 7] = whiteKing;
-            board[4, 0] = blackKing;
+            _board[0, 0] = new Rook(Side.Black, _board);
+            _board[7, 0] = new Rook(Side.Black, _board);
+            _board[0, 7] = new Rook(Side.White, _board);
+            _board[7, 7] = new Rook(Side.White, _board);
 
-            whiteKingAttacked = new PieceAttacked(whiteKing, board);
-            blackKingAttacked = new PieceAttacked(blackKing, board);
+            _board[3, 7] = new Queen(Side.White, _board);
+            _board[3, 0] = new Queen(Side.Black, _board);
+
+            _board[0, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+            _board[1, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+            _board[2, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+            _board[3, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+            _board[4, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+            _board[5, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+            _board[6, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+            _board[7, 1] = new Pawn(Side.Black, _promotionManager, _history, _board);
+
+            _board[0, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+            _board[1, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+            _board[2, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+            _board[3, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+            _board[4, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+            _board[5, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+            _board[6, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+            _board[7, 6] = new Pawn(Side.White, _promotionManager, _history, _board);
+
+            _whiteKing = new King(Side.White, new Point(0, 7), new Point(7, 7), _history, _board);
+            _blackKing = new King(Side.Black, new Point(0, 0), new Point(7, 0), _history, _board);
+
+
+            _board[4, 7] = _whiteKing;
+            _board[4, 0] = _blackKing;
+
+            _whiteKingAttacked = new PieceAttacked(_whiteKing, _board);
+            _blackKingAttacked = new PieceAttacked(_blackKing, _board);
 
             CalcMoves();
         }
@@ -111,115 +116,125 @@ namespace ChessGame
         public string GetChessBoard()
         {
             return new FEN.FENGenerator()
-                .AddBorderState(board)
-                .AddFiftyMovesRule(fiftyMovesRule.MovesCount)
-                .AddCastlingState(whiteKing, board)
-                .AddCastlingState(blackKing, board)
+                .AddBorderState(_board)
+                .AddFiftyMovesRule(_fiftyMovesRule.MovesCount)
+                .AddCastlingState(_whiteKing, _board)
+                .AddCastlingState(_blackKing, _board)
                 .AddSide(Turn)
-                .AddEnPassant(history, board)
-                .AddMovesCounter(history.MovesCount)
+                .AddEnPassant(_history, _board)
+                .AddMovesCounter(0)//_history.MovesCount)
                 .Result;
+        }
+        
+        public bool IsMoveAllowed(Point start, Point end)
+        {
+            return _moves.ContainsKey(start) && _moves[start].Contains(end);
         }
 
         public void Move(Point start, Point end)
         {
-            if (GameResult != GameResult.OnGoing)
+            ClearMarks();
+          
+            if (!_moves.ContainsKey(start) || !_moves[start].Contains(end)) 
                 return;
+            
+            ChessPiece piece = _board[start.X, start.Y];
 
-            if (moves.ContainsKey(start) && moves[start].Contains(end))
+            var rule = piece.Rules.Find((mv) => mv.CanExecute(start, end));
+            if (rule == null) 
+                return;
+            
+            var mv = rule.CreateMove(start, end);
+            mv.Execute();
+
+            _fiftyMovesRule.RegisterMove(mv);
+            var stateBefore = new GameState(Turn, _fiftyMovesRule.MovesCount, GameResult, CheckState, SetState);
+                
+            CalcState();
+
+            Turn = Turn == Side.White ? Side.Black : Side.White;
+                
+
+            CalcMoves();
+
+            if (!_currentSideHasMoves)
             {
-                ChessPiece piece = board[start.X, start.Y];
-
-                var rule = piece.Rules.Find((mv) => { return mv.CanExecute(start, end); });
-                if (rule != null)
-                {
-                    var mv = rule.CreateMove(start, end);
-                    mv.Execute();
-
-                    fiftyMovesRule.RegisterMove(mv);
-                    GameState before = new GameState(Turn, fiftyMovesRule.MovesCount, GameResult, CheckState, SetState);
-                    //history.PushMove(mv, before);
-
-                    CalcState();
-
-                    Turn = Turn == Side.White ? Side.Black : Side.White;
-
-                    //CalcState();
-
-
-                    CalcMoves();
-
-                    if (!currentSideHasMoves)
-                    {
-                        if (CheckState != CheckState.None)
-                            GameResult = Turn == Side.White ? GameResult.Black : GameResult.White;
-                        else
-                            GameResult = GameResult.Stalemate;
-                    }
-
-                    GameState after = new GameState(Turn, fiftyMovesRule.MovesCount, GameResult, CheckState, SetState);
-                    history.AddMove(mv, before, after);
-
-                }
+                if (CheckState != CheckState.None)
+                    GameResult = Turn == Side.White ? GameResult.Black : GameResult.White;
+                else
+                    GameResult = GameResult.Stalemate;
             }
-        }
 
-        public string CurrentMovePointer
-        {
-            get
-            {
-                string result = string.Empty;
-                foreach (var item in history.Position)
-                    result += item.ToString() + " ";
-                return result;
-            }
+            GameState after = new GameState(Turn, _fiftyMovesRule.MovesCount, GameResult, CheckState, SetState);
+            _history.AddMove(mv, stateBefore, after);
+
+            CalcMoves();
+           
         }
 
         public void ToStart()
         {
-            history.PointerToStart();
+            ClearMarks();
+            _history.PointerToStart();
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
         }
 
         public void ToEnd()
         {
-            history.PointerToEnd();
+            ClearMarks();
+            _history.PointerToEnd();
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
         }
 
         public void Undo()
         {
-            history.Undo();
-
+            ClearMarks();
+            _history.Undo();
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
 
         }
 
         public void Redo()
         {
-            history.Redo();
-
+            ClearMarks();
+            _history.Redo();
+            foreach (var historyMark in _history.Marks)
+                AddMark(historyMark);
             CalcMoves();
         }
 
-        public void ToMove(IList<int> pointer)
+        public string MovePosition
         {
-            history.SetPositiion(pointer);
-
-            CalcMoves();
+            get => _history.Position;
+            set
+            {
+                ClearMarks();
+                _history.Position = value;
+                foreach (var historyMark in _history.Marks)
+                    AddMark(historyMark);
+                CalcMoves();
+            }
         }
 
-        public Dictionary<Point, List<Point>> MoveList => new Dictionary<Point, List<Point>>(moves);
+        public List<Point> PreviousMove => _history.PreviousMove;
+
+        public Dictionary<Point, List<Point>> MoveList => new Dictionary<Point, List<Point>>(_moves);
 
         public void SetPromotionPiece(Side side, string pieceName)
         {
-            promotionManager.SetPromotionPiece(side, pieceName);
+            _promotionManager.SetPromotionPiece(side, pieceName);
         }
 
         private void SetState(GameState state)
         {
             Turn = state.Turn;
-            fiftyMovesRule = new FiftyMoves(state.FiftyMovesCount);
+            _fiftyMovesRule = new FiftyMoves(state.FiftyMovesCount);
             CheckState = state.CheckState;
             GameResult = state.GameResult;
         }
@@ -227,31 +242,28 @@ namespace ChessGame
 
         private void CalcMoves()
         {
-            currentSideHasMoves = false;
-            moves = new Dictionary<Point, List<Point>>();
+            _currentSideHasMoves = false;
+            _moves = new Dictionary<Point, List<Point>>();
 
-            var kingAttacked = Turn == Side.White ? whiteKingAttacked : blackKingAttacked;
-            for (int i = 0; i < board.Size; i++)
+            var kingAttacked = Turn == Side.White ? _whiteKingAttacked : _blackKingAttacked;
+            for (int i = 0; i < _board.Size; i++)
             {
-                for (int j = 0; j < board.Size; j++)
+                for (int j = 0; j < _board.Size; j++)
                 {
-                    if (board[i, j] != null && board[i, j].Side == Turn)
+                    if (_board[i, j] != null && _board[i, j].Side == Turn)
                     {
                         Point current = new Point(i, j);
-                        moves.Add(current, new List<Point>());
+                        _moves.Add(current, new List<Point>());
 
-                        foreach (var moveRule in board[i, j].Rules)
+                        foreach (var move in _board[i, j].Rules.SelectMany(moveRule => moveRule.AvailableMoves(new Point(i, j))))
                         {
-                            foreach (var move in moveRule.AvailableMoves(new Point(i, j)))
+                            move.Execute();
+                            if (kingAttacked == null || !kingAttacked.IsApplied)
                             {
-                                move.Execute();
-                                if (!kingAttacked.IsApplied)
-                                {
-                                    moves[current].Add(move.EndPoint);
-                                    currentSideHasMoves = true;
-                                }
-                                move.Undo();
+                                _moves[current].Add(move.EndPoint);
+                                _currentSideHasMoves = true;
                             }
+                            move.Undo();
                         }
                     }
                 }
@@ -260,13 +272,13 @@ namespace ChessGame
 
         private void CalcState()
         {
-            var enemyKingAttacked = Turn == Side.White ? blackKingAttacked : whiteKingAttacked;
+            var enemyKingAttacked = Turn == Side.White ? _blackKingAttacked : _whiteKingAttacked;
             if (enemyKingAttacked.IsApplied)
                 CheckState = Turn == Side.White ? CheckState.Black : CheckState.White;
             else
                 CheckState = CheckState.None;
 
-            if (!currentSideHasMoves)
+            if (!_currentSideHasMoves)
             {
                 if (CheckState != CheckState.None)
                     GameResult = Turn == Side.White ? GameResult.Black : GameResult.White;
@@ -275,24 +287,54 @@ namespace ChessGame
             }
         }
 
-        
+        public void AddComment(string comment)
+        {
+            _history.CommentCurrentMove(comment);
+        }
 
+        public void AddMark(Mark mark)
+        {
+            mark.UniqueKey = _marksNextKey;
+            _marks.Add(_marksNextKey++, mark);
+        }
+
+        public void RemoveMark(int markKey)
+        {
+            if (!_marks.ContainsKey(markKey))
+                return;
+            _marks.Remove(markKey);
+        }
+
+        public void ClearMarks()
+        {
+            _marks.Clear();
+            _marksNextKey = 0;
+        }
+
+        public void AddMoveMark(Mark mark)
+        {
+            _history.AddMark(mark);
+        }
 
         public static ChessGame FromFEN(string fen)
         {
             ChessGame newGame = new ChessGame();
 
-            var parser = new FEN.FENParser(fen, newGame.history, newGame.SetState);
-            newGame.board = parser.ChessBoard;
-            newGame.whiteKing = parser.WhiteKing;
-            newGame.blackKing = parser.BlackKing;
+            var parser = new FEN.FENParser(fen, newGame._history, newGame.SetState);
+            newGame._board = parser.ChessBoard;
+            newGame._whiteKing = parser.WhiteKing;
+            newGame._blackKing = parser.BlackKing;
 
-            newGame.whiteKingAttacked = new PieceAttacked(newGame.whiteKing, newGame.board);
-            newGame.blackKingAttacked = new PieceAttacked(newGame.blackKing, newGame.board);
+            if (newGame._whiteKing != null)
+                newGame._whiteKingAttacked = new PieceAttacked(newGame._whiteKing, newGame._board);
+            if (newGame._blackKing != null)
+                newGame._blackKingAttacked = new PieceAttacked(newGame._blackKing, newGame._board);
 
-            newGame.fiftyMovesRule = new FiftyMoves(parser.FiftyMoves);
+            newGame._fiftyMovesRule = new FiftyMoves(parser.FiftyMoves);
 
             newGame.Turn = parser.Turn == Side.White ? Side.Black : Side.White;
+
+            newGame._promotionManager = parser.PromotionProvider;
 
             // TODO Кол-во ходов
 
@@ -314,10 +356,39 @@ namespace ChessGame
         {
             PGN.PGNGenerator pGNGenerator = new PGN.PGNGenerator();
 
-            history.Serialize(pGNGenerator);
+            _history.Serialize(pGNGenerator);
 
             return pGNGenerator.Result;
         }
 
+        public string CreateMoveJson()
+        {
+            MovesJsonGenerator generator = new MovesJsonGenerator();
+
+            _history.Serialize(generator);
+
+            return generator.Result;
+        }
+
+        public static ChessGame FromPGN(string pgn)
+        {
+            var parser = new PGN.PGNParser(pgn);
+
+            ChessGame game = new ChessGame();
+            if (parser.FEN != string.Empty)
+                game = FromFEN(parser.FEN);
+
+
+            try
+            {
+                parser.ParseMoves(game, game._board);
+
+            }
+            catch (Exception ex) 
+            { 
+                Console.WriteLine(ex.ToString());
+            }
+            return game;
+        }
     }
 }

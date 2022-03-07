@@ -31,10 +31,16 @@ namespace ChessGame.MoveRules
             if (!board.IsFieldExists(startPosition.X + direction.X, endPosition.Y))
                 return false;
 
-            if(board[startPosition.X + direction.X, startPosition.Y] != moveHistory.LastMovePiece)
+            if (board[startPosition.X + direction.X, startPosition.Y] != moveHistory.LastMovePiece)
                 return false;
 
             if (!moveHistory.LastMoveType<T>())
+                return false;
+
+            if (moveHistory.LastMovePiece.Side == board[startPosition.X, startPosition.Y].Side)
+                return false;
+
+            if (board[endPosition.X, endPosition.Y] != null)
                 return false;
 
             return base.IsMoveValid(startPosition, endPosition);

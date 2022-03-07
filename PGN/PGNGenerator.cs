@@ -48,13 +48,23 @@ namespace ChessGame.PGN
             branchEnded = false;
         }
 
-        public void AddAdditional(string data)
+        public void AddComment(string data)
         {
             // TODO Board signs
             result.Append("{");
             result.Append("PTR: ");
             result.Append(data);
             result.Append("} ");
+        }
+
+        public void AddPointer(string pointer)
+        {
+            //
+        }
+
+        public void AddStartMessage(string message)
+        {
+            //
         }
 
         public void StartBranch()

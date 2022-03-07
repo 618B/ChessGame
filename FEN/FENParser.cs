@@ -12,7 +12,7 @@ namespace ChessGame.FEN
     class FENParser
     {
         IMoveStorage moveHistory;
-        IPromotionProvider promotionProvider;
+        PromotionManager promotionProvider;
 
         public King WhiteKing { get; private set; }
 
@@ -27,7 +27,8 @@ namespace ChessGame.FEN
         public int MovesCount { get; private set; }
 
         Action<GameState> setGameState;
-        
+
+        public PromotionManager PromotionProvider => promotionProvider;
 
 
         public FENParser(string fen, IMoveStorage moveHistory, Action<GameState> setGameState)
@@ -88,8 +89,8 @@ namespace ChessGame.FEN
             switch (pieceName)
             {
                 case 'p':
-                    if (yPosition == 0 || yPosition == 7)
-                        throw new Exception($"Cannot set pawn to {yPosition}");
+                   // if (yPosition == 0 || yPosition == 7)
+                   //     throw new Exception($"Cannot set pawn to {yPosition}");
                     return new Pawn(pieceSide, promotionProvider, moveHistory, board, yPawnPosition == yPosition);
                 case 'n':
                     return new Knight(pieceSide, board);
