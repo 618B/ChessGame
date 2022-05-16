@@ -11,6 +11,9 @@ namespace ChessGame
         [JsonPropertyName("markStart")]
         public Point StartPoint { get; set; }
         
+        [JsonPropertyName("color")]
+        public string Color { get; set; }
+        
         [JsonPropertyName("markPosition")]
         public Point EndPoint { get; set; }
     }
