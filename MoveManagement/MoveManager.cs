@@ -74,7 +74,22 @@ namespace ChessGame.MoveManagement
             if (_current?.Move == null)
                 return;
 
-            _movedPieces.Remove(_current.Move.Piece);
+            bool pieceContains = false;
+            MoveStorageItem iterator = _current.Prev;
+            while (iterator != _head)
+            {
+                if (iterator.Move.Piece == _current.Move.Piece)
+                {
+                    pieceContains = true;
+                    break;
+                }
+
+                iterator = iterator.Prev;
+            }
+            
+            if (!pieceContains)
+                _movedPieces.Remove(_current.Move.Piece);
+            
             _current.Move.Undo();
             _current.Before.Apply();
             _current = _current.Prev;
