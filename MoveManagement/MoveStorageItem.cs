@@ -73,7 +73,6 @@ namespace ChessGame.MoveManagement
             else
                 serializer.AddBlackMove(moveFormatter);
             
-            Console.WriteLine(MoveComment);
             serializer.AddPointer(UniqueId);
             serializer.AddComment(MoveComment);
 

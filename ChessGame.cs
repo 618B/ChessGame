@@ -386,7 +386,7 @@ namespace ChessGame
             }
             catch (Exception ex) 
             { 
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("[ChessGame] Exception: " + ex.Message);
             }
             return game;
         }
